@@ -184,10 +184,18 @@ const ModuleA = (function () {
 
   /**
    * Call when remote stream is received — confirms media is flowing.
+   * Treats stream arrival as connection success if Module B hasn't resolved yet.
    */
   function onStreamReceived() {
-    if (_state === STATE.CONNECTED) {
-      _log("Module A: stream confirmed via " + (_networkMode || "unknown") + " path ✓", "success");
+    _log("Module A: stream confirmed via " + (_networkMode || "unknown") + " path ✓", "success");
+
+    // Stream flowing = connection successful — resolve whichever module is active
+    if (_state === STATE.LOCAL_ATTEMPT) {
+      _log("Module A: stream received during local attempt — confirming local path ✓", "success");
+      ModuleB.onIceStateChange("connected");
+    } else if (_state === STATE.RELAY_ATTEMPT) {
+      _log("Module A: stream received during relay attempt — confirming relay path ✓", "success");
+      ModuleC.onIceStateChange("connected");
     }
   }
 
