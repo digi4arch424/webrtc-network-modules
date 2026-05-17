@@ -183,21 +183,24 @@ const ModuleA = (function () {
   }
 
   /**
-   * Call when remote stream is received — confirms media is flowing.
-   * Treats stream arrival as connection success if Module B hasn't resolved yet.
+   * Call when local stream is sent (sender side) or remote stream received (viewer side).
+   * Treats stream flowing as connection success if module hasn't resolved yet.
    */
   function onStreamReceived() {
     _log("Module A: stream confirmed via " + (_networkMode || "unknown") + " path ✓", "success");
 
     // Stream flowing = connection successful — resolve whichever module is active
     if (_state === STATE.LOCAL_ATTEMPT) {
-      _log("Module A: stream received during local attempt — confirming local path ✓", "success");
+      _log("Module A: stream flowing during local attempt — confirming local path ✓", "success");
       ModuleB.onIceStateChange("connected");
     } else if (_state === STATE.RELAY_ATTEMPT) {
-      _log("Module A: stream received during relay attempt — confirming relay path ✓", "success");
+      _log("Module A: stream flowing during relay attempt — confirming relay path ✓", "success");
       ModuleC.onIceStateChange("connected");
     }
   }
+
+  // Alias for sender side — same logic
+  const onStreamSent = onStreamReceived;
 
   /**
    * Clean shutdown.
@@ -224,6 +227,7 @@ const ModuleA = (function () {
     getIceConfig,
     onCallEstablished,
     onStreamReceived,
+    onStreamSent,
     disconnect,
     getState,
     getNetworkMode,
