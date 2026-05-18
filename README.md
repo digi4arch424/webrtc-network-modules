@@ -149,3 +149,28 @@ These modules grow with the construction cam project:
 | M2 | GPS metadata via Module A data channel |
 | M5 | Multiset VPS — Module A coordinates position stream |
 | M7 | Multi-camera — Module A manages multiple peer sessions |
+
+---
+
+## SignalingClient
+
+`signaling.js` is included in this repo — a reusable WebSocket signaling client that works with [webrtc-signaling-server](https://github.com/digi4arch424/webrtc-signaling-server).
+
+```html
+<script src="https://digi4arch424.github.io/webrtc-network-modules/signaling.js"></script>
+```
+
+```js
+SignalingClient.configure({
+  url:       "wss://your-server.onrender.com",
+  sessionId: "site-cam-001",
+  role:      "sender",
+  onRegistered:   () => {},
+  onViewerReady:  () => {},
+  onAnswer:       (sdp)  => {},
+  onIceCandidate: (cand) => {},
+});
+SignalingClient.connect();
+SignalingClient.sendOffer(sdp);
+SignalingClient.sendIceCandidate(candidate);
+```
